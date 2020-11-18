@@ -1,0 +1,41 @@
+{
+    "name": "mradang/laravel-options",
+    "description": "laravel-options",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "mradang",
+            "email": "mradang@163.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.1",
+        "laravel/framework": "~6.0||~7.0||~8.0"
+    },
+    "require-dev": {
+        "laravel/framework": "^6.18",
+        "phpunit/phpunit": "~8.0",
+        "orchestra/testbench": "^4.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "mradang\\LaravelOptions\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "mradang\\LaravelOptions\\Test\\": "tests"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "mradang\\LaravelOptions\\LaravelOptionsServiceProvider"
+            ],
+            "aliases": {
+                "Option": "mradang\\LaravelOptions\\Facade"
+            }
+        }
+    }
+}
