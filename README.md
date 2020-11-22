@@ -1,7 +1,7 @@
 ## 安装
 
 ```shell
-$ composer require mradang/laravel-options -vvv
+composer require mradang/laravel-options -vvv
 ```
 
 ## 配置
@@ -9,7 +9,7 @@ $ composer require mradang/laravel-options -vvv
 1. 发布配置文件
 
 ```shell
-$ php artisan vendor:publish --provider="mradang\\LaravelOptions\\LaravelOptionsServiceProvider"
+php artisan vendor:publish --provider="mradang\\LaravelOptions\\LaravelOptionsServiceProvider"
 ```
 
 2. 刷新数据库迁移
@@ -49,17 +49,18 @@ php artisan migrate:refresh
 ### 配置路由
 
 修改配置文件 options.php 后配置路由
+laravel-options 未自动配置路由，方便使用者自定义路由及权限控制
 
 ```php
 // get example
 Route::post(
     'getExampleOptions',
-    [\mradang\LaravelOptions\Controllers\OptionController::class, 'getExampleOptions'],
+    [\mradang\LaravelOptions\Controllers\OptionsController::class, 'getExampleOptions'],
 );
 
 // set example
 Route::post(
     'setExampleOptions',
-    [\mradang\LaravelOptions\Controllers\OptionController::class, 'setExampleOptions'],
+    [\mradang\LaravelOptions\Controllers\OptionsController::class, 'setExampleOptions'],
 );
 ```

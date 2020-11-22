@@ -4,7 +4,7 @@ namespace mradang\LaravelOptions\Controllers;
 
 use mradang\LaravelOptions\Facade;
 
-class OptionController extends Controller
+class OptionsController extends Controller
 {
     public function __call($name, $arguments)
     {

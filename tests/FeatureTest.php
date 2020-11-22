@@ -2,7 +2,7 @@
 
 namespace mradang\LaravelOptions\Test;
 
-use mradang\LaravelOptions\Controllers\OptionController;
+use mradang\LaravelOptions\Controllers\OptionsController;
 use mradang\LaravelOptions\Facade;
 
 class FeatureTest extends TestCase
@@ -45,11 +45,11 @@ class FeatureTest extends TestCase
         $this->assertNotTrue(Facade::has('foo'));
         $this->assertNotTrue(Facade::has('bar'));
 
-        $this->app['router']->post('setFooOptions', [OptionController::class, 'setFooOptions']);
+        $this->app['router']->post('setFooOptions', [OptionsController::class, 'setFooOptions']);
         $this->post('setFooOptions')->assertStatus(400);
 
-        $this->app['router']->post('setExampleOptions', [OptionController::class, 'setExampleOptions']);
-        $this->app['router']->post('getExampleOptions', [OptionController::class, 'getExampleOptions']);
+        $this->app['router']->post('setExampleOptions', [OptionsController::class, 'setExampleOptions']);
+        $this->app['router']->post('getExampleOptions', [OptionsController::class, 'getExampleOptions']);
         $data = [
             'level' => 6,
             'enabled' => false,
