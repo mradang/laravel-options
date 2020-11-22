@@ -46,20 +46,21 @@ class FeatureTest extends TestCase
         $this->assertNotTrue(Facade::has('bar'));
 
         $this->app['router']->post('setFooOptions', [OptionsController::class, 'setFooOptions']);
-        $this->post('setFooOptions')->assertStatus(400);
+        $this->json('POST', 'setFooOptions')->assertStatus(400);
 
         $this->app['router']->post('setExampleOptions', [OptionsController::class, 'setExampleOptions']);
         $this->app['router']->post('getExampleOptions', [OptionsController::class, 'getExampleOptions']);
-        $data = [
+        $res = $this->json('POST', 'setExampleOptions', [
             'level' => 6,
             'enabled' => false,
             'arr' => [2, 3],
-        ];
-        $this->post('setExampleOptions', $data)->assertStatus(200);
+        ]);
+        $res->assertStatus(200);
+
         $this->assertDatabaseHas('options', [
             'key' => 'example',
         ]);
-        $this->post('getExampleOptions')->assertJson([
+        $this->json('POST', 'getExampleOptions')->assertJson([
             'level' => 6,
             'enabled' => false,
             'arr' => [2, 3],
