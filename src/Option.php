@@ -2,7 +2,7 @@
 
 namespace mradang\LaravelOptions;
 
-class Facade extends \Illuminate\Support\Facades\Facade
+class Option extends \Illuminate\Support\Facades\Facade
 {
     protected static function getFacadeAccessor()
     {

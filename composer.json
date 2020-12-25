@@ -32,10 +32,7 @@
         "laravel": {
             "providers": [
                 "mradang\\LaravelOptions\\LaravelOptionsServiceProvider"
-            ],
-            "aliases": {
-                "Option": "mradang\\LaravelOptions\\Facade"
-            }
+            ]
         }
     }
 }
