@@ -2,7 +2,7 @@
 
 namespace mradang\LaravelOptions\Controllers;
 
-use mradang\LaravelOptions\Facade;
+use mradang\LaravelOptions\Option;
 
 class OptionsController extends Controller
 {
@@ -17,7 +17,7 @@ class OptionsController extends Controller
 
     private function get($key)
     {
-        return Facade::get($key);
+        return Option::get($key);
     }
 
     private function set(string $key, array $data)
@@ -33,6 +33,6 @@ class OptionsController extends Controller
         }
         $validatedData = validator($data, $rule)->validate();
 
-        Facade::set($key, $validatedData);
+        Option::set($key, $validatedData);
     }
 }

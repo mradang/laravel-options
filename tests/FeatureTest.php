@@ -3,7 +3,7 @@
 namespace mradang\LaravelOptions\Test;
 
 use mradang\LaravelOptions\Controllers\OptionsController;
-use mradang\LaravelOptions\Facade;
+use mradang\LaravelOptions\Option;
 
 class FeatureTest extends TestCase
 {
@@ -17,33 +17,33 @@ class FeatureTest extends TestCase
         $user = User::create(['name' => '张三']);
         $this->assertSame(1, $user->id);
 
-        $this->assertSame(Facade::get('example'), [
+        $this->assertSame(Option::get('example'), [
             'level' => 5,
             'enabled' => true,
             'arr' => [],
         ]);
 
-        Facade::set('foo', 'bar');
-        $this->assertSame(Facade::get('foo'), 'bar');
+        Option::set('foo', 'bar');
+        $this->assertSame(Option::get('foo'), 'bar');
 
-        Facade::set(['foo' => 'bar', 'bar' => 'baz']);
-        $this->assertSame(Facade::get(['foo', 'bar']), [
+        Option::set(['foo' => 'bar', 'bar' => 'baz']);
+        $this->assertSame(Option::get(['foo', 'bar']), [
             'bar' => 'baz',
             'foo' => 'bar',
         ]);
 
-        Facade::set('arr', [1, 3, 5]);
+        Option::set('arr', [1, 3, 5]);
 
-        $this->assertSame(Facade::get('arr'), [1, 3, 5]);
+        $this->assertSame(Option::get('arr'), [1, 3, 5]);
 
-        $this->assertSame(Facade::get('baz', 'abc'), 'abc');
+        $this->assertSame(Option::get('baz', 'abc'), 'abc');
 
-        $this->assertTrue(Facade::has('bar'));
-        $this->assertNotTrue(Facade::has('baz'));
+        $this->assertTrue(Option::has('bar'));
+        $this->assertNotTrue(Option::has('baz'));
 
-        Facade::remove(['foo', 'bar']);
-        $this->assertNotTrue(Facade::has('foo'));
-        $this->assertNotTrue(Facade::has('bar'));
+        Option::remove(['foo', 'bar']);
+        $this->assertNotTrue(Option::has('foo'));
+        $this->assertNotTrue(Option::has('bar'));
 
         $this->app['router']->post('setFooOptions', [OptionsController::class, 'setFooOptions']);
         $this->json('POST', 'setFooOptions')->assertStatus(400);
