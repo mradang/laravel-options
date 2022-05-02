@@ -33,6 +33,9 @@ class OptionsController extends Controller
         }
         $validatedData = validator($data, $rule)->validate();
 
-        Option::set($key, $validatedData);
+        $value = Option::get($key);
+        $value = array_merge($value, $validatedData);
+
+        Option::set($key, $value);
     }
 }
