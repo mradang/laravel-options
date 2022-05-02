@@ -27,9 +27,12 @@ class OptionsController extends Controller
 
         abort_if($options === null, 400, '无效的选项名');
 
+        $item_keys = array_keys($data);
         $rule = [];
         foreach ($options as $item => $params) {
-            $rule[$item] = $params['rule'];
+            if (in_array($item, $item_keys)) {
+                $rule[$item] = $params['rule'];
+            }
         }
         $validatedData = validator($data, $rule)->validate();
 
