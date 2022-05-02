@@ -10,6 +10,6 @@ class Option extends Model
 
     protected $casts = [
         'key' => 'string',
-        'value' => 'json',
+        'value' => 'array',
     ];
 }
