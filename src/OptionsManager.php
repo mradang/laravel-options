@@ -3,6 +3,7 @@
 namespace mradang\LaravelOptions;
 
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Support\Arr;
 use mradang\LaravelOptions\Models\Option;
 
 class OptionsManager
@@ -38,26 +39,35 @@ class OptionsManager
     public function get($key, $default = null)
     {
         if (\is_array($key)) {
-            $query = Option::query();
-            return $query
-                ->when(!empty($key), function ($query) use ($key) {
-                    $query->whereIn('key', $key);
-                })
-                ->pluck('value', 'key')
-                ->toArray();
-        } else {
-            $key = \strtolower($key);
-            $options = config("options.{$key}", []);
-
-            if ($default === null && count($options)) {
-                $default = [];
-                foreach ($options as $item => $params) {
-                    $default[$item] = $params['default'];
-                }
-            }
-
-            return Option::firstOrNew(\compact('key'), ['value' => $default])->value;
+            return $this->multiGet($key, $default);
         }
+        return $this->oneGet($key, $default);
+    }
+
+    private function multiGet(array $keys, $default): array
+    {
+        $records = Option::whereIn('key', $keys)->get();
+        $ret = [];
+        foreach ($keys as $key) {
+            $ret[$key] = Arr::get(
+                $records->firstWhere('key', $key),
+                'value',
+                Arr::get($default, $key) ?? $this->getOptionsDefault($key),
+            );
+        }
+        return $ret;
+    }
+
+    private function oneGet(string $key, $default)
+    {
+        return Option::firstOrNew(\compact('key'), [
+            'value' => $default ?? $this->getOptionsDefault($key),
+        ])->value;
+    }
+
+    private function getOptionsDefault($key)
+    {
+        return Arr::get(config("options.{$key}"), 'default');
     }
 
     public function remove($key)

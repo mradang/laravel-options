@@ -2,43 +2,37 @@
 
 namespace mradang\LaravelOptions\Controllers;
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use mradang\LaravelOptions\Option;
 
 class OptionsController extends Controller
 {
-    public function __call($name, $arguments)
+    public function get(Request $request)
     {
-        if (preg_match('/^get([A-Za-z]+)Options$/', $name, $matches)) {
-            return $this->get($matches[1]);
-        } else if (preg_match('/^set([A-Za-z]+)Options$/', $name, $matches)) {
-            return $this->set($matches[1], request()->all());
-        }
+        // 仅支持配置文件中预定义的选项
+        $keys = array_intersect(
+            $request->all(),
+            array_keys(config('options')),
+        );
+
+        return Option::get($keys);
     }
 
-    private function get($key)
+    public function set(Request $request)
     {
-        return Option::get($key);
-    }
-
-    private function set(string $key, array $data)
-    {
-        $key = \strtolower($key);
-        $options = config("options.{$key}");
-
-        abort_if($options === null, 400, '无效的选项名');
-
-        $item_keys = array_keys($data);
+        $keys = array_keys(config('options'));
+        $kv = [];
         $rule = [];
-        foreach ($options as $item => $params) {
-            if (in_array($item, $item_keys)) {
-                $rule[$item] = $params['rule'];
+
+        foreach ($request->all() as $k => $v) {
+            if (in_array($k, $keys)) {
+                $kv[$k] = $v;
+                $rule[$k] = Arr::get(config("options.$k"), 'rule');
             }
         }
-        $validatedData = validator($data, $rule)->validate();
 
-        $value = Option::get($key);
-        $value = array_merge($value, $validatedData);
-
-        Option::set($key, $value);
+        $validatedData = validator($kv, $rule)->validate();
+        Option::set($validatedData);
     }
 }

@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('options', function (Blueprint $table) {
             $table->increments('id');
             $table->string('key')->unique();
-            $table->json('value')->nullable();
+            $table->text('value');
             $table->timestamps();
         });
     }
