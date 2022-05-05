@@ -54,13 +54,13 @@ laravel-options 未自动配置路由，方便使用者自定义路由及权限�
 ```php
 // get example
 Route::post(
-    'getExampleOptions',
-    [\mradang\LaravelOptions\Controllers\OptionsController::class, 'getExampleOptions'],
+    'get',
+    [\mradang\LaravelOptions\Controllers\OptionsController::class, 'get'],
 );
 
 // set example
 Route::post(
-    'setExampleOptions',
-    [\mradang\LaravelOptions\Controllers\OptionsController::class, 'setExampleOptions'],
+    'set',
+    [\mradang\LaravelOptions\Controllers\OptionsController::class, 'set'],
 );
 ```
