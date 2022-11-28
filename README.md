@@ -45,22 +45,3 @@ php artisan migrate:refresh
 \Option::remove('foo');
 \Option::remove(['foo', 'bar']);
 ```
-
-### 配置路由
-
-修改配置文件 options.php 后配置路由
-laravel-options 未自动配置路由，方便使用者自定义路由及权限控制
-
-```php
-// get example
-Route::post(
-    'get',
-    [\mradang\LaravelOptions\Controllers\OptionsController::class, 'get'],
-);
-
-// set example
-Route::post(
-    'set',
-    [\mradang\LaravelOptions\Controllers\OptionsController::class, 'set'],
-);
-```

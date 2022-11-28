@@ -15,7 +15,7 @@ class OptionsManager
         $this->app = $app;
     }
 
-    public function set($key, $value = null)
+    public function set(array|string $key, $value = null)
     {
         if (\is_array($key)) {
             $this->multiSet($key);
@@ -36,7 +36,7 @@ class OptionsManager
         Option::updateOrCreate(\compact('key'), \compact('value'));
     }
 
-    public function get($key, $default = null)
+    public function get(array|string $key, $default = null)
     {
         if (\is_array($key)) {
             return $this->multiGet($key, $default);
@@ -52,7 +52,7 @@ class OptionsManager
             $ret[$key] = Arr::get(
                 $records->firstWhere('key', $key),
                 'value',
-                Arr::get($default, $key) ?? $this->getOptionsDefault($key),
+                Arr::get($default, $key),
             );
         }
         return $ret;
@@ -61,13 +61,8 @@ class OptionsManager
     private function oneGet(string $key, $default)
     {
         return Option::firstOrNew(\compact('key'), [
-            'value' => $default ?? $this->getOptionsDefault($key),
+            'value' => $default,
         ])->value;
-    }
-
-    private function getOptionsDefault($key)
-    {
-        return Arr::get(config("options.{$key}"), 'default');
     }
 
     public function remove($key)

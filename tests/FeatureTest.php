@@ -2,7 +2,6 @@
 
 namespace mradang\LaravelOptions\Test;
 
-use mradang\LaravelOptions\Controllers\OptionsController;
 use mradang\LaravelOptions\Option;
 
 class FeatureTest extends TestCase
@@ -14,90 +13,73 @@ class FeatureTest extends TestCase
 
     public function testBasicFeatures()
     {
-        $user = User::create(['name' => '张三']);
-        $this->assertSame(1, $user->id);
+        // 不存在
+        $this->assertNotTrue(Option::has('foo'));
 
         // 默认值
-        $this->assertSame(Option::get('example_level'), 5);
-        $this->assertSame(Option::get('example_level', 6), 6);
+        $this->assertSame(Option::get('foo'), null);
+        $this->assertSame(Option::get('foo', 6), 6);
 
-        $this->assertSame(
-            Option::get(['example_level', 'user_arr']),
-            [
-                'example_level' => 5,
-                'user_arr' => [],
-            ],
-        );
-        $this->assertSame(Option::get(
-            ['example_level', 'user_arr'],
-            [
-                'example_level' => 6,
-                'user_arr' => ['a', 'b'],
-            ],
-        ), [
-            'example_level' => 6,
-            'user_arr' => ['a', 'b'],
-        ]);
-
-        // 路由
-        $this->app['router']->post('set', [OptionsController::class, 'set']);
-        $this->app['router']->post('get', [OptionsController::class, 'get']);
-
-        $this->json('POST', 'set', [
-            'example_level' => 8,
-            'user_arr' => ['foo' => 'bar'],
-        ])->assertStatus(200);
-        $this->assertSame(Option::get('example_level'), 8);
-        $this->assertSame(Option::get('user_arr'), ['foo' => 'bar']);
-
-        $this->json('POST', 'set', [
-            'example_level' => 9,
-        ])->assertStatus(200);
-        $this->assertSame(Option::get('example_level'), 9);
-
-        $this->json('POST', 'set', [
-            'other_level' => 2,
-        ])->assertStatus(200);
-        $this->assertSame(Option::get('other_level'), null);
-
-        Option::remove('example_level');
-        $this->assertSame(Option::get('example_level'), 5);
-
-        $this->assertDatabaseHas('options', [
-            'key' => 'user_arr',
-        ]);
-
-        $res = $this->json('POST', 'get', [
-            'example_level',
-            'user_arr',
-        ]);
-        $res->assertJson([
-            'example_level' => 5,
-            'user_arr' => ['foo' => 'bar'],
-        ]);
-
-
+        // 单写
         Option::set('foo', 'bar');
+        $this->assertTrue(Option::has('foo'));
         $this->assertSame(Option::get('foo'), 'bar');
-        $this->assertSame(Option::get('foo', 'eee'), 'bar');
 
-        Option::set(['foo' => 'bar', 'bar' => 'baz']);
+        // 改写
+        Option::set('foo', 'baz');
+        $this->assertSame(Option::get('foo'), 'baz');
+        $this->assertSame(Option::get('foo', 'eee'), 'baz');
+
+        // 单删
+        Option::remove('foo');
+        // 不存在
+        $this->assertNotTrue(Option::has('foo'));
+
+        // 多写
+        Option::set(['foo' => 'bar', 'bar' => [
+            'item1' => 'baz1',
+            'item2' => 'baz2',
+        ]]);
+        $this->assertSame(Option::get('foo'), 'bar');
+        $this->assertSame(Option::get('bar'), [
+            'item1' => 'baz1',
+            'item2' => 'baz2',
+        ]);
+
+        // 多读
         $this->assertSame(Option::get(['foo', 'bar']), [
             'foo' => 'bar',
-            'bar' => 'baz',
+            'bar' => [
+                'item1' => 'baz1',
+                'item2' => 'baz2',
+            ],
         ]);
 
-        Option::set('arr', [1, 3, 5]);
-        $this->assertSame(Option::get('arr'), [1, 3, 5]);
-
-        $this->assertSame(Option::get('baz'), null);
-        $this->assertSame(Option::get('baz', 'abc'), 'abc');
-
-        $this->assertTrue(Option::has('bar'));
-        $this->assertNotTrue(Option::has('baz'));
-
+        // 多删
         Option::remove(['foo', 'bar']);
-        $this->assertNotTrue(Option::has('foo'));
+        $this->assertDatabaseMissing('options', [
+            'key' => 'foo',
+        ]);
         $this->assertNotTrue(Option::has('bar'));
+
+        // setting 服务默认值
+        $this->assertDatabaseMissing('options', [
+            'key' => 'user_setting_default_title_level',
+        ]);
+        $this->assertEquals(UserSettingService::get('default_title_level'), 3);
+
+        // setting 服务改写
+        UserSettingService::set(['default_title_level' => 5]);
+        $this->assertEquals(UserSettingService::get('default_title_level'), 5);
+        $this->assertDatabaseHas('options', [
+            'key' => 'user_setting_default_title_level',
+        ]);
+
+        // setting 服务验证
+        try {
+            UserSettingService::set(['default_title_level' => 'test']);
+        } catch (\Exception $e) {
+            $this->assertEquals($e->status, 422);
+        }
     }
 }
