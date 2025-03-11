@@ -6,12 +6,12 @@ use mradang\LaravelOptions\Option;
 
 class FeatureTest extends TestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
     }
 
-    public function testBasicFeatures()
+    public function test_basic_features()
     {
         // 不存在
         $this->assertNotTrue(Option::has('foo'));

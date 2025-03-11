@@ -41,6 +41,7 @@ class OptionsManager
         if (\is_array($key)) {
             return $this->multiGet($key, $default);
         }
+
         return $this->oneGet($key, $default);
     }
 
@@ -55,6 +56,7 @@ class OptionsManager
                 Arr::get($default, $key),
             );
         }
+
         return $ret;
     }
 

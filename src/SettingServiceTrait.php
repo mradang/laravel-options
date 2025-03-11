@@ -14,8 +14,9 @@ trait SettingServiceTrait
     {
         $ret = [];
         foreach ($data as $key => $value) {
-            $ret[self::optionPrefix() . $key] = $value;
+            $ret[self::optionPrefix().$key] = $value;
         }
+
         return $ret;
     }
 
@@ -25,6 +26,7 @@ trait SettingServiceTrait
         foreach ($data as $key => $value) {
             $ret[str($key)->after(self::optionPrefix())->value] = $value;
         }
+
         return $ret;
     }
 
